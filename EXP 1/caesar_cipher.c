@@ -1,24 +1,64 @@
 #include <stdio.h>
 #include <ctype.h>
-char* encrypt(char* text, int s) {
- char* result = malloc(strlen(text) + 1);
- for (int i = 0; text[i] != '\0'; i++) {
- if (isupper(text[i]))
- result[i] = (char)(((int)text[i] + s - 65) % 26 + 65);
- else if (islower(text[i]))
- result[i] = (char)(((int)text[i] + s - 97) % 26 + 97);
- else
- result[i] = text[i];
- }
- result[strlen(text)] = '\0';
- return result;
+#include <string.h>
+
+// Function to encrypt the text
+void encrypt(char text[], int key) {
+    char ch;
+    for (int i = 0; text[i] != '\0'; ++i) {
+        ch = text[i];
+        if (isalpha(ch)) {
+            if (islower(ch)) {
+                ch = (ch - 'a' + key) % 26 + 'a';
+            }
+            if (isupper(ch)) {
+                ch = (ch - 'A' + key) % 26 + 'A';
+            }
+        }
+        text[i] = ch;
+    }
 }
+
+// Function to decrypt the text
+void decrypt(char text[], int key) {
+    char ch;
+    for (int i = 0; text[i] != '\0'; ++i) {
+        ch = text[i];
+        if (isalpha(ch)) {
+            if (islower(ch)) {
+                ch = (ch - 'a' - key + 26) % 26 + 'a';
+            }
+            if (isupper(ch)) {
+                ch = (ch - 'A' - key + 26) % 26 + 'A';
+            }
+        }
+        text[i] = ch;
+    }
+}
+
 int main() {
- char text[] = "abcdefghijklmnopqrstuvwxyz";
- int s = 3;
- printf("Text : %s\n", text);
- printf("Shift: %d\n", s);
-CAESAR CIPHER
- printf("Cipher: %s\n", encrypt(text, s));
- return 0;
+    char text[500];
+    int key, choice;
+
+    // Taking user input
+    printf("Enter a message: ");
+    fgets(text, sizeof(text), stdin);
+
+    printf("Enter the key: ");
+    scanf("%d", &key);
+
+    printf("Enter 1 to Encrypt or 2 to Decrypt: ");
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        encrypt(text, key);
+        printf("Encrypted message: %s\n", text);
+    } else if (choice == 2) {
+        decrypt(text, key);
+        printf("Decrypted message: %s\n", text);
+    } else {
+        printf("Invalid choice.\n");
+    }
+
+    return 0;
 }
