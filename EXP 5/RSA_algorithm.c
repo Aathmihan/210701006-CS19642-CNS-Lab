@@ -1,53 +1,66 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
+
+// Returns gcd of a and b
 int gcd(int a, int b) {
- if (b == 0)
- return a;
- return gcd(b, a % b);
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
 }
-int power_mod(int x, unsigned int y, int p) {
- int res = 1;
- x = x % p;
- while (y > 0) {
- if (y & 1)
- res = (res * x) % p;
- y = y >> 1;
-RSA ALGORITHM
- x = (x * x) % p;
- }
- return res;
+
+// Function to perform modular exponentiation
+// It returns (base^exp) % mod
+unsigned long long mod_exp(unsigned long long base, unsigned long long exp, unsigned long long mod) {
+    unsigned long long result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 == 1) {  // If exp is odd, multiply base with result
+            result = (result * base) % mod;
+        }
+        exp = exp >> 1;      // exp = exp / 2
+        base = (base * base) % mod;  // Change base to base^2
+    }
+    return result;
 }
-int mod_inverse(int a, int m) {
- int m0 = m;
- int y = 0, x = 1;
- if (m == 1)
- return 0;
- while (a > 1) {
- int q = a / m;
- int t = m;
- m = a % m, a = t;
- t = y;
- y = x - q * y;
- x = t;
- }
- if (x < 0)
- x += m0;
- return x;
-}
+
 int main() {
- int p = 3;
- int q = 11;
- int n = p * q;
- int phi_n = (p - 1) * (q - 1);
- int e = 7;
- int d = mod_inverse(e, phi_n);
- printf("Public key: {%d, %d}\n", e, n);
- printf("Private key: {%d, %d}\n", d, n);
- int plaintext = 31;
- int ciphertext = power_mod(plaintext, e, n);
- printf("Encrypted message: %d\n", ciphertext);
- int decrypted_text = power_mod(ciphertext, d, n);
- printf("Decrypted message: %d\n", decrypted_text);
- return 0;
+    // Two random prime numbers (input from user)
+    int p, q;
+    printf("Enter two prime numbers (p and q): ");
+    scanf("%d %d", &p, &q);
+
+    // First part of public key
+    int n = p * q;
+
+    // Calculate Euler's Totient
+    int phi = (p - 1) * (q - 1);
+
+    // Finding e (public key exponent) (input from user)
+    int e;
+    printf("Enter public key exponent (e): ");
+    scanf("%d", &e);
+
+    // Finding d (private key exponent) (input from user)
+    int d;
+    printf("Enter private key exponent (d): ");
+    scanf("%d", &d);
+
+    // Message to be encrypted (input from user)
+    int msg;
+    printf("Enter message to encrypt: ");
+    scanf("%d", &msg);
+    printf("Message data = %d\n", msg);
+
+    // Encryption: c = (msg ^ e) % n
+    unsigned long long c = mod_exp(msg, e, n);
+    printf("Encrypted data = %llu\n", c);
+
+    // Decryption: m = (c ^ d) % n
+    unsigned long long m = mod_exp(c, d, n);
+    printf("Original Message Sent = %llu\n", m);
+
+    return 0;
 }
