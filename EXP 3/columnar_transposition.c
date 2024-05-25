@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include<stdlib.h>
 #define MAX_KEY_LENGTH 100
 char key[MAX_KEY_LENGTH];
 int keyMap[MAX_KEY_LENGTH];
@@ -17,7 +18,6 @@ char* encryptMessage(char* msg) {
  row = strlen(msg) / col;
  if (strlen(msg) % col)
  row += 1;
-COLUMNAR TRANSPOSITION
  char matrix[row][col];
  for (i = 0; i < row; i++) {
  for (j = 0; j < col; ) {
